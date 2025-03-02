@@ -1,0 +1,42 @@
+<video #video width="640" height="360">
+	<!-- <source src="http://localhost:3000/video/output.mp4" type="video/mp4" /> -->
+	<source src="http://localhost:3000/video/bbb_h265.mp4" type="video/mp4" />
+	Tu navegador no soporta la reproducción de este video.
+</video>
+
+<div>
+	<button (click)="play()">Play</button>
+	<button (click)="pause()">Pause</button>
+	<button (click)="stop()">Stop</button>
+</div>
+
+<div>
+	<label for="volume">Volume:</label>
+	<input
+		type="range"
+		id="volume"
+		min="0"
+		max="1"
+		step="0.1"
+		[value]="volume"
+		(input)="setVolume($any($event.target).value)"
+	/>
+</div>
+
+<div>
+	<label for="playbackRate">Playback Rate:</label>
+	<input
+		type="range"
+		id="playbackRate"
+		min="0.5"
+		max="2"
+		step="0.1"
+		[value]="playbackRate"
+		(input)="setPlaybackRate($any($event.target).value)"
+	/>
+</div>
+
+<button (click)="mute()" *ngIf="!muted">Mute</button>
+<button (click)="unmute()" *ngIf="muted">Unmute</button>
+
+<button (click)="toggleFullscreen()">Fullscreen</button>
