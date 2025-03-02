@@ -1,0 +1,14 @@
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/spec", // directorio de salida de los archivos transpilados
+    "types": ["jest"], // tipos de archivos a incluir
+    "forceConsistentCasingInFileNames": true // fuerza un formato de nombre de archivo consistente
+  },
+  "include": [
+    "src/**/*.spec.ts", // incluye los archivos de prueba unitaria
+    "src/**/*.d.ts" // incluye los archivos de definición de tipos
+  ]
+}
