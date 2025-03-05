@@ -19,5 +19,5 @@ export const routes: Routes = [
 		path: 'video/decoder',
 		loadComponent: videoDecoder,
 	},
-	{ path: '', redirectTo: '/video/decoder', pathMatch: 'full' },
+	{ path: '', redirectTo: '/video/nativo', pathMatch: 'full' },
 ];
