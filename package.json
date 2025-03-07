@@ -3,6 +3,7 @@
 	"version": "0.0.0",
 	"scripts": {
 		"start": "ng serve --host 0.0.0.0",
+		"start:proxy": "node ./scripts/proxy.js",
 		"build": "ng build",
 		"build:prod": "ng build --prod",
 		"test": "jest --config=jest.config.js --coverage --coverageDirectory=./.coverage/jest --logHeapUsage",
