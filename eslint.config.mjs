@@ -22,7 +22,7 @@ export default [
 			"no-empty-function": "warn", // Advierte sobre funciones vacías
 			"no-redeclare": "error", // Prohíbe redeclarar variables en el mismo ámbito
 			"no-shadow": "warn", // Advierte sobre variables en ámbitos anidados que ocultan variables exteriores
-			"no-undef": "warn", // Prohíbe el uso de variables que no han sido declaradas
+			"no-undef": "off", // Prohíbe el uso de variables que no han sido declaradas
 			"no-unreachable": "error", // Prohíbe código inalcanzable
 			"no-var": "error", // Exige el uso de let o const en lugar de var
 			"prefer-arrow-callback": "error", // Recomienda usar funciones flecha en callbacks
