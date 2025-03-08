@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { VideoDecoderService } from './services/video-decoder.service';
+import { CanvasGenerate2dService } from './services/generate/canvas-generate-2d.service';
+import { CanvasGenerateWebGlService } from './services/generate/canvas-generate-webgl.service';
 
 @Component({
 	selector: 'video-decoder',
@@ -13,7 +15,11 @@ export class VideoDecoderComponent implements OnInit {
 	private videoFile!: File;
 	private imageUrl!: string;
 
-	constructor(private videoDecoderService: VideoDecoderService) {}
+	constructor(
+		private videoDecoderService: VideoDecoderService,
+		private canvasGenerate2dService: CanvasGenerate2dService,
+		private canvasGenerateWebGlService: CanvasGenerateWebGlService,
+	) {}
 
 	ngOnInit() {}
 
@@ -25,15 +31,25 @@ export class VideoDecoderComponent implements OnInit {
 
 		await this.decodeFileVideo();
 
-		this.getFileAndShow();
+		this.getFileAndShowCanvas();
+		this.getFileAndShowCanvasWebGl();
 	}
 
 	private async decodeFileVideo() {
 		this.imageUrl = await this.videoDecoderService.processFile(this.videoFile);
 	}
 
-	private getFileAndShow() {
-		const imgElement = document.getElementById('thumbnail') as HTMLImageElement;
-		imgElement.src = this.imageUrl;
+	private getFileAndShowCanvas() {
+		const canvas = document.getElementById(
+			'thumbnailCanvas',
+		) as HTMLCanvasElement;
+		this.canvasGenerate2dService.generate(canvas, this.imageUrl);
+	}
+
+	private getFileAndShowCanvasWebGl() {
+		const canvas = document.getElementById(
+			'thumbnailCanvaswgl',
+		) as HTMLCanvasElement;
+		this.canvasGenerateWebGlService.generate(canvas, this.imageUrl);
 	}
 }

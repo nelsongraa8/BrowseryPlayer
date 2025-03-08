@@ -37,7 +37,8 @@ export class FFmpegWrapperService {
 			'readFile',
 			'/tmp/thumbnail.jpg',
 		);
-		const blob = new Blob([data.buffer], { type: 'image/jpeg' });
+		const blob: Blob = new Blob([data.buffer], { type: 'image/jpeg' });
+
 		return URL.createObjectURL(blob);
 	}
 }
