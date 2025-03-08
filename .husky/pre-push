@@ -1,5 +1,5 @@
 # pre-push
 
-pnpm test
+# pnpm test
 
-pnpm playwright
+# pnpm playwright

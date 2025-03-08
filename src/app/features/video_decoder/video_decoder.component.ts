@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import { VideoDecoderService } from './services/video-decoder.service';
 
 @Component({
 	selector: 'video-decoder',
@@ -10,42 +10,30 @@ import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 	styleUrls: ['video_decoder.component.scss'],
 })
 export class VideoDecoderComponent implements OnInit {
-	ffmpeg = createFFmpeg({ log: true });
+	private videoFile!: File;
+	private imageUrl!: string;
 
-	async ngOnInit() {
-		await this.ffmpeg.load();
-	}
+	constructor(private videoDecoderService: VideoDecoderService) {}
+
+	ngOnInit() {}
 
 	async load(event: Event) {
 		const inputElement = event.target as HTMLInputElement;
 		if (!inputElement.files?.length) return;
 
-		const file = inputElement.files[0];
-		const fileName = file.name;
+		this.videoFile = inputElement.files[0];
 
-		this.ffmpeg.FS('writeFile', fileName, await fetchFile(file));
-
-		await this.runFfmpeg(fileName);
+		await this.decodeFileVideo();
 
 		this.getFileAndShow();
 	}
 
-	private async runFfmpeg(fileName: string) {
-		await this.ffmpeg.run(
-			'-i',
-			fileName,
-			'-frames:v',
-			'1',
-			'/tmp/thumbnail.jpg',
-		);
+	private async decodeFileVideo() {
+		this.imageUrl = await this.videoDecoderService.processFile(this.videoFile);
 	}
 
 	private getFileAndShow() {
-		const data = this.ffmpeg.FS('readFile', '/tmp/thumbnail.jpg');
-		const blob = new Blob([data.buffer], { type: 'image/jpeg' });
-		const url = URL.createObjectURL(blob);
-
 		const imgElement = document.getElementById('thumbnail') as HTMLImageElement;
-		imgElement.src = url;
+		imgElement.src = this.imageUrl;
 	}
 }
