@@ -8,6 +8,8 @@ export class CreateFFmpegService {
 	public ffmpeg = createFFmpeg({ log: true });
 
 	async load() {
+		if (this.ffmpeg.isLoaded()) return;
+
 		await this.ffmpeg.load();
 	}
 }
