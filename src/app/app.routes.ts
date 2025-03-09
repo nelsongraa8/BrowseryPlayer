@@ -10,6 +10,11 @@ const videoNativo = () =>
 		(m) => m.VideoNativoComponent,
 	);
 
+const VideoStream = () =>
+	import('./features/video_stream/video_stream.component').then(
+		(m) => m.VideoStreamComponent,
+	);
+
 export const routes: Routes = [
 	{
 		path: 'video/nativo',
@@ -19,5 +24,9 @@ export const routes: Routes = [
 		path: 'video/decoder',
 		loadComponent: videoDecoder,
 	},
-	{ path: '', redirectTo: '/video/decoder', pathMatch: 'full' },
+	{
+		path: 'video/stream',
+		loadComponent: VideoStream,
+	},
+	{ path: '', redirectTo: '/video/stream', pathMatch: 'full' },
 ];
