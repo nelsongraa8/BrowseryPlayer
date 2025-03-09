@@ -1,5 +1,6 @@
-<input type="file" (change)="handleFile($event)" />
+<canvas #videoCanvas></canvas>
 
-<div>
-	<canvas #videoCanvas style="width: 80%; height: calc(80% * 0.56)"></canvas>
-</div>
+<!-- Reproductor de audio -->
+<audio #audioPlayer controls></audio>
+
+<input type="file" (change)="handleFile($event)" />

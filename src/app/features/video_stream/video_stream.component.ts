@@ -10,8 +10,11 @@ import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 })
 export class VideoStreamComponent implements OnInit {
 	@ViewChild('videoCanvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
+	@ViewChild('audioPlayer', { static: true }) audioPlayer!: ElementRef<HTMLAudioElement>;
 
 	private ffmpeg = createFFmpeg({ log: true });
+	public hasAudio = false; // Variable para controlar si hay audio
+	public errorMessage: string | null = null; // Mensaje de error o advertencia
 
 	async ngOnInit() {
 		await this.loadFFmpeg();
@@ -34,27 +37,61 @@ export class VideoStreamComponent implements OnInit {
 		const width = 640; // Cambia según el video
 		const height = 360;
 
-		// Extraer frames como raw RGBA directamente en memoria
-		await this.ffmpeg.run(
-			'-i',
-			fileName, // Archivo de entrada
-			'-vf',
-			`fps=25,scale=${width}:${height}`, // Escalar a 640x360 y 25 FPS
-			'-f',
-			'rawvideo', // Salida en formato crudo
-			'-pix_fmt',
-			'rgba', // Formato sin compresión
-			'output.raw', // Guardar en memoria virtual
-		);
+		try {
+			// Extraer frames como raw RGBA directamente en memoria
+			await this.ffmpeg.run(
+				'-i',
+				fileName, // Archivo de entrada
+				'-vf',
+				`fps=25,scale=${width}:${height}`, // Escalar a 640x360 y 25 FPS
+				'-f',
+				'rawvideo', // Salida en formato crudo
+				'-pix_fmt',
+				'rgba', // Formato sin compresión
+				'output.raw', // Guardar en memoria virtual
+			);
 
-		// Leer datos binarios de la memoria virtual
-		const frameData = this.ffmpeg.FS('readFile', 'output.raw');
+			// Leer datos binarios de la memoria virtual
+			const frameData = this.ffmpeg.FS('readFile', 'output.raw');
 
-		this.playFrames(frameData, width, height);
+			// Reproducir los frames de video
+			this.playFrames(frameData, width, height);
+
+			// Intentar extraer el audio
+			try {
+				await this.ffmpeg.run(
+					'-i',
+					fileName, // Archivo de entrada
+					'-q:a', // Calidad de audio
+					'0',
+					'-map',
+					'a', // Mapear solo el stream de audio
+					'output.mp3', // Guardar el audio en memoria virtual
+				);
+
+				// Verificar si el archivo de audio existe
+				if (this.ffmpeg.FS('readdir', '/').includes('output.mp3')) {
+					const audioData = this.ffmpeg.FS('readFile', 'output.mp3');
+					this.playAudio(audioData);
+					this.hasAudio = true; // Hay audio
+					this.errorMessage = null; // Limpiar mensaje de error
+				} else {
+					this.hasAudio = false; // No hay audio
+					this.errorMessage = 'El archivo de video no contiene una pista de audio.';
+				}
+			} catch (audioError) {
+				this.hasAudio = false; // No hay audio
+				this.errorMessage = 'No se pudo extraer el audio del archivo de video.';
+				console.error('Error al extraer el audio:', audioError);
+			}
+		} catch (videoError) {
+			this.errorMessage = 'Error al procesar el archivo de video.';
+			console.error('Error al procesar el video:', videoError);
+		}
 	}
 
 	async playFrames(frameData: Uint8Array, width: number, height: number) {
-		console.info('Inicia la reproduccion ...');
+		console.info('Inicia la reproducción del video...');
 
 		const ctx = this.canvas.nativeElement.getContext('2d');
 		if (!ctx) return;
@@ -72,5 +109,23 @@ export class VideoStreamComponent implements OnInit {
 			ctx.putImageData(imageData, 0, 0);
 			await new Promise((resolve) => setTimeout(resolve, 40)); // Simular 25 FPS
 		}
+	}
+
+	playAudio(audioData: Uint8Array) {
+		console.info('Inicia la reproducción del audio...');
+
+		// Verificar si el elemento audioPlayer está disponible
+		if (!this.audioPlayer || !this.audioPlayer.nativeElement) {
+			console.error('El reproductor de audio no está disponible en el DOM.');
+			return;
+		}
+
+		// Crear un Blob con los datos de audio
+		const audioBlob = new Blob([audioData], { type: 'audio/mp3' });
+		const audioUrl = URL.createObjectURL(audioBlob);
+
+		// Asignar la URL al elemento de audio
+		this.audioPlayer.nativeElement.src = audioUrl;
+		this.audioPlayer.nativeElement.play();
 	}
 }
