@@ -9,6 +9,7 @@ export default [
 		files: ["**/*.{ts,js,mjs,cjs}"],
 		languageOptions: { globals: globals.browser },
 		rules: {
+			"@typescript-eslint/no-explicit-any": "off",
 			indent: ["error", "tab"], // Usa tabulaciones para la indentación
 			semi: "error", // Requiere punto y coma al final de las sentencias
 			"prefer-const": "error", // Sugiere usar `const` para variables que nunca se reasignan
@@ -27,11 +28,7 @@ export default [
 			"no-var": "error", // Exige el uso de let o const en lugar de var
 			"prefer-arrow-callback": "error", // Recomienda usar funciones flecha en callbacks
 			"no-multi-spaces": "error", // Prohíbe múltiples espacios en blanco
-			quotes: [
-				"error",
-				"single",
-				{ avoidEscape: true, allowTemplateLiterals: true },
-			],
+			quotes: ["error", "single", { avoidEscape: true, allowTemplateLiterals: true }],
 			"comma-dangle": [
 				"error",
 				{
