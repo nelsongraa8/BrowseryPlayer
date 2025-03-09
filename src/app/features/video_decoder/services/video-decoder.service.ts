@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FFmpegWrapperService } from './ffmpeg/ffmpeg-wrapper.service';
+import { FFmpegWrapperService } from '../../ffmpeg/ffmpeg-wrapper.service';
 
 @Injectable({
 	providedIn: 'root',
